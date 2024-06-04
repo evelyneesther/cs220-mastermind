@@ -4,9 +4,13 @@
 package game.template;
 
 import java.net.URL;
+import java.util.Arrays;
 
 import javafx.application.Application;
+import javafx.collections.ObservableList;
+import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -17,8 +21,10 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import java.util.Random;
 
 public class App extends Application
 {
@@ -31,7 +37,12 @@ public class App extends Application
     // using StackPane so that they can hold a rectangle and an image
     // we use the rectangle to color the squares
     // and the image to place the pieces
-    private StackPane[][] grid = new StackPane[SIZE][SIZE];
+    private StackPane[][] grid = new StackPane[12][12];
+
+    private Integer[][] colorGrid=new Integer[8][12];
+    private int turn=0;
+    private int[] code=new int[4];
+    private boolean endless=false;
 
     @Override
     public void start(Stage primaryStage) throws Exception
@@ -42,26 +53,34 @@ public class App extends Application
 
         GridPane gridPane = new GridPane();
         // preferred size of the gridpane
-        gridPane.setPrefSize(SQUARE_SIZE * 8, SQUARE_SIZE * 8);
-        
+        gridPane.setPrefSize(SQUARE_SIZE * 8, SQUARE_SIZE * 12);
+
         root.getChildren().add(gridPane);
 
-        // loosely based on https://stackoverflow.com/questions/69339314/how-can-i-draw-over-a-gridpane-of-rectangles-with-an-image-javafx
-        for (int row = 0; row < SIZE; row++)
+        for (int i=0; i<8; i++)
         {
-            for (int col = 0; col < SIZE; col++)
-            {
-                Rectangle rect = new Rectangle(SQUARE_SIZE, SQUARE_SIZE);
+            Arrays.fill(colorGrid[i], -1);
+        }
 
-                if ((row + col) % 2 == 0) { 
-                    rect.getStyleClass().add("white-square");
+        // loosely based on https://stackoverflow.com/questions/69339314/how-can-i-draw-over-a-gridpane-of-rectangles-with-an-image-javafx
+        for (int row = 0; row < 12; row++)
+        {
+            for (int col = 0; col < 9; col++)
+            {
+
+                StackPane cell;
+
+                if (col==4){
+                    Rectangle rect = new Rectangle(SQUARE_SIZE, SQUARE_SIZE);
+                    rect.getStyleClass().add("square-2");
+                    cell = new StackPane(rect);
+                } else {
+                    Circle circ=new Circle(SQUARE_SIZE/2);
+                    circ.getStyleClass().add("dot-blank");
+                    cell = new StackPane(circ);
                 }
-                else {
-                    rect.getStyleClass().add("black-square");
-                }
-                
-                StackPane cell = new StackPane(rect);
-                
+
+
                 grid[row][col] = cell;
 
                 // name each cell with its row and column
@@ -77,8 +96,16 @@ public class App extends Application
 
                 // finally, put the stackpane into the gridpane
                 gridPane.add(cell, col, row);
+
             }
         }
+        Random random = new Random();
+        int[] code = new int[4];
+        for (int i = 0; i < 4; i++) {
+            code[i] = random.nextInt(6);
+        }
+        System.out.println(Arrays.toString(code));
+
 
         // don't give a width or height to the scene
         // it will figure it out because there's a menu bar
@@ -99,9 +126,94 @@ public class App extends Application
         primaryStage.setOnCloseRequest(event -> {
             System.out.println("oncloserequest");
         });
+        scene.setOnKeyPressed(event -> {
+            System.out.println("Key pressed: " + event.getCode());
+            switch (event.getCode()) {
+                // check for the key input
+                case ESCAPE:
+                    // remove focus from the textfields by giving it to the root VBox
+                    root.requestFocus();
+                    break;
+                case ENTER:
+                    int corrPosColor = 0;
+                    int incorrPosColor = 0;
+                    for (int c = 0; c < 4; c++) {
+                        if (colorGrid[turn][c] == -1) {
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                            alert.setTitle("Invalid Solution");
+                            alert.setHeaderText(null);
+                            alert.setContentText("Make sure all pegs are selected!");
+                            alert.showAndWait();
+                        }
+                    }
+                    boolean[] used = new boolean[4];
+                    Arrays.fill(used, false);
 
+                    for (int c = 0; c < 4; c++) {
+                        if (code[c] == colorGrid[turn][c]) {
+                            corrPosColor++;
+                            used[c] = true;
+                        } else {
+                            for (int i = 0; i < 4; i++) {
+                                if (code[c] == colorGrid[turn][i]&&!used[i]) {
+                                    incorrPosColor++;
+                                }
+                            }
+                        }
+                    }
+                    System.out.println("Correct position and color: " + corrPosColor);
+                    System.out.println("Incorrect position and correct color: " + incorrPosColor);
+                    if (corrPosColor == 4) {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Congratulations!");
+                        alert.setHeaderText(null);
+                        alert.setContentText("You win!");
+                        alert.showAndWait();
+                    }
+                    for (int c = 5; c < 9; c++) {
+                        if (corrPosColor > 0) {
+                            Circle blackPeg = new Circle(SQUARE_SIZE / 2);
+                            blackPeg.getStyleClass().add("dot-black");
+                            grid[turn][c].getChildren().add(blackPeg);
+                            corrPosColor--;
+                        } else if (incorrPosColor > 0) {
+                            Circle whitePeg = new Circle(SQUARE_SIZE / 2);
+                            whitePeg.getStyleClass().add("dot-white");
+                            grid[turn][c].getChildren().add(whitePeg);
+                            incorrPosColor--;
+                        }
+                        else {
+                            grid[turn][c].getChildren().clear();
+                        }
+                    }
+                    // Code matches, handle accordingly
+                    // ...
+                    turn++;
+                    if (turn == 12) {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Game Over");
+                        alert.setHeaderText(null);
+                        alert.setContentText("You lose!");
+                        alert.showAndWait();
+                    }
+                    break;
+                case R:
+                    for (int col = 0; col < 12; col++) {
+                        if (col != 4) {
+                            Circle blankPeg = new Circle(SQUARE_SIZE / 2);
+                            blankPeg.getStyleClass().add("dot-blank");
+                            grid[turn][col].getChildren().add(blankPeg);
+                        }
+                    }
+                    break;
+                default:
+                    System.out.println("you typed key: " + event.getCode());
+                    break;
+
+            }
+        });
+        showControls();
     }
-
     private void clearBoard()
     {
         // removes all of the images (pieces) from the board
@@ -132,47 +244,15 @@ public class App extends Application
         placePiece(Player.BLACK, ChessPiece.QUEEN, 4,4);
     }
 
-    private void setKeyboardHandler()
-    {
-        // add this to the root which is a VBox
-        root.setOnKeyPressed(event -> {
-            System.out.println("Key pressed: " + event.getCode());
-            switch (event.getCode())
-            {
-                // check for the key input
-                case ESCAPE:
-                    // remove focus from the textfields by giving it to the root VBox
-                    root.requestFocus();
-                    System.out.println("You pressed ESC key");
-                    break;
-                case ENTER:
-                    System.out.println("You pressed ENTER key");
-                    break;
-                default:
-                    System.out.println("you typed key: " + event.getCode());
-                    break;
-                
-            }
-        });
-    }
-
     private void handleMouseClick(MouseEvent event, int row, int col)
     {
-        System.out.println("Mouse clicked on " + row + ", " + col);
-
-        // I'm just showing off that you can do this
-        // the proper way to do this is to have a model class
-        // similar to the Board class in Sudoku
-        // and then ask the model what piece is at this row/col
-        grid[row][col].getChildren().forEach(child -> {
-            if (child instanceof ImageView)
-            {
-                String url = ((ImageView) child).getImage().getUrl();
-                String piece = url.substring(url.lastIndexOf('/') + 1, url.lastIndexOf('.'));
-
-                System.out.println("Image found for piece " + piece);
-            }
-        });
+        if (col>=4){
+            return;
+        };
+        Circle circle = new Circle(SQUARE_SIZE / 2);
+        colorGrid[row][col]++;
+        circle.getStyleClass().add(getDotColor(row, col));
+        grid[row][col].getChildren().add(circle);
     }
 
     private void placePiece(Player player, ChessPiece piece, int row, int col)
@@ -206,26 +286,16 @@ public class App extends Application
     private MenuBar createMenuBar()
     {
         MenuBar menuBar = new MenuBar();
-    	menuBar.getStyleClass().add("menubar");
+        menuBar.getStyleClass().add("menubar");
 
         //
         // File Menu
         //
-    	Menu fileMenu = new Menu("File");
-
-        addMenuItem(fileMenu, "Load from file", () -> {
-            System.out.println("Load from file");
+        Menu modeMenu = new Menu("Controls");
+        addMenuItem(modeMenu, "Show Controls", () -> {
+            showControls();
         });
-
-        addMenuItem(fileMenu, "board1", () -> {
-            drawBoard1();
-        });
-
-        addMenuItem(fileMenu, "board2", () -> {
-            drawBoard2();
-        });
-
-        menuBar.getMenus().add(fileMenu);
+        menuBar.getMenus().add(modeMenu);
 
         return menuBar;
     }
@@ -237,8 +307,22 @@ public class App extends Application
         menu.getItems().add(menuItem);
     }
 
-    public static void main(String[] args) 
+    public static void main(String[] args)
     {
         launch(args);
+    }
+
+    private String getDotColor(int row, int col) {
+        String[] dotColors = {"dot-red", "dot-blue", "dot-green", "dot-yellow", "dot-cyan", "dot-purple"};
+        int index = colorGrid[row][col] % dotColors.length;
+        return dotColors[index];
+    }
+
+    private void showControls(){
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Controls");
+        alert.setHeaderText(null);
+        alert.setContentText("Click on a peg to change it's color, press enter to submit your guess. Use R to clear your current line. Black pegs indicate correct color and position, white pegs indicate correct color but wrong position. You have 12 turns to guess the code.");
+        alert.showAndWait();
     }
 }

@@ -31,20 +31,18 @@
 }
 
 .grid-pane {
-    -fx-padding: 5;
+    -fx-padding: 10;
     -fx-border-color: black;
     -fx-border-width: 2;
     -fx-hgap: 1; /* Horizontal gap between cells */
     -fx-vgap: 1; /* Vertical gap between cells */
 }
 
-.white-square {
-    /*
+.square-1 {
     -fx-font-size: 40;
     -fx-font-family: "Courier New";
     -fx-border-color: white;
-    -fx-border-width: 0.5;    
-    */
+    -fx-border-width: 5;
     -fx-max-width: 70;
     -fx-max-height: 70;
     -fx-min-width: 70;
@@ -52,13 +50,11 @@
     -fx-fill: antiquewhite;
 }
 
-.black-square {
-    /*
+.square-2 {
     -fx-font-size: 40;
     -fx-font-family: "Courier New";
-    -fx-border-color: lightgray;
-    -fx-border-width: 0.5;
-    */
+    -fx-border-color: white;
+    -fx-border-width: 5;
     -fx-max-width: 70;
     -fx-max-height: 70;
     -fx-min-width: 70;
@@ -66,7 +62,125 @@
     -fx-fill: chocolate;
 }
 
+.square-3 {
+-fx-font-size: 40;
+    -fx-font-family: "Courier New";
+    -fx-border-color: white;
+    -fx-border-width: 05;
+    -fx-max-width: 70;
+    -fx-max-height: 70;
+    -fx-min-width: 70;
+    -fx-min-height: 70;
+    -fx-fill: #FF0000;
+}
 
+.dot-white {
+-fx-font-size: 40;
+    -fx-font-family: "Courier New";
+    -fx-border-color: white;
+    -fx-border-width: 05;
+    -fx-max-width: 70;
+    -fx-max-height: 70;
+    -fx-min-width: 70;
+    -fx-min-height: 70;
+    -fx-fill: #FFFFFF;
+}
+
+.dot-blue {
+-fx-font-size: 40;
+    -fx-font-family: "Courier New";
+    -fx-border-color: white;
+    -fx-border-width: 05;
+    -fx-max-width: 70;
+    -fx-max-height: 70;
+    -fx-min-width: 70;
+    -fx-min-height: 70;
+    -fx-fill: #0000FF;
+}
+
+.dot-black {
+-fx-font-size: 40;
+    -fx-font-family: "Courier New";
+    -fx-border-color: white;
+    -fx-border-width: 05;
+    -fx-max-width: 70;
+    -fx-max-height: 70;
+    -fx-min-width: 70;
+    -fx-min-height: 70;
+    -fx-fill: #000000;
+}
+
+.dot-red {
+-fx-font-size: 40;
+    -fx-font-family: "Courier New";
+    -fx-border-color: white;
+    -fx-border-width: 05;
+    -fx-max-width: 70;
+    -fx-max-height: 70;
+    -fx-min-width: 70;
+    -fx-min-height: 70;
+    -fx-fill: #FF0000;
+}
+
+.dot-green {
+-fx-font-size: 40;
+    -fx-font-family: "Courier New";
+    -fx-border-color: white;
+    -fx-border-width: 05;
+    -fx-max-width: 70;
+    -fx-max-height: 70;
+    -fx-min-width: 70;
+    -fx-min-height: 70;
+    -fx-fill: #00FF00;
+}
+
+.dot-yellow {
+-fx-font-size: 40;
+    -fx-font-family: "Courier New";
+    -fx-border-color: white;
+    -fx-border-width: 05;
+    -fx-max-width: 70;
+    -fx-max-height: 70;
+    -fx-min-width: 70;
+    -fx-min-height: 70;
+    -fx-fill: #EDFF00;
+}
+
+.dot-cyan {
+    -fx-font-size: 40;
+    -fx-font-family: "Courier New";
+    -fx-border-color: white;
+    -fx-border-width: 5;
+    -fx-max-width: 70;
+    -fx-max-height: 70;
+    -fx-min-width: 70;
+    -fx-min-height: 70;
+    -fx-fill: #00FFFF;
+}
+
+.dot-purple {
+    -fx-font-size: 40;
+    -fx-font-family: "Courier New";
+    -fx-border-color: white;
+    -fx-border-width: 5;
+    -fx-max-width: 70;
+    -fx-max-height: 70;
+    -fx-min-width: 70;
+    -fx-min-height: 70;
+    -fx-fill: #800080;
+}
+
+.dot-blank {
+-fx-font-size: 40;
+    -fx-font-family: "Courier New";
+    -fx-border-color: white;
+    -fx-border-width: 05;
+    -fx-max-width: 70;
+    -fx-max-height: 70;
+    -fx-min-width: 70;
+    -fx-min-height: 70;
+    -fx-fill: #A1CFDE;
+}
 
 .text-field-selected {
     -fx-background-color: rgb(147, 155, 221);
